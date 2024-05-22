@@ -19,6 +19,29 @@ class DetailViewController: UIViewController, UIImagePickerControllerDelegate & 
         let gestRec = UITapGestureRecognizer(target: self, action: #selector(choosePhoto))
         imageV.addGestureRecognizer(gestRec)
     }
+  
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        imageV.image = info[.originalImage] as? UIImage
+        self.dismiss(animated: true, completion: nil)
+    }
+    @IBAction func nextBut(_ sender: Any) {
+        if nameTf.text != "" && kindsTf.text != "" && commentTf.text != "" {
+            if let choosenImage = imageV.image {
+                let mymodel = MyModel.sharedIns
+                mymodel.placeName = nameTf.text!
+                mymodel.placeKind = kindsTf.text!
+                mymodel.placeComment = commentTf.text!
+                mymodel.placeImage = choosenImage
+            }
+            self.performSegue(withIdentifier: "toMapVc", sender: nil)
+        }else{
+            let alert = UIAlertController(title: "Hata", message: "Bir hata oluştu", preferredStyle: UIAlertController.Style.alert)
+            let okBut = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil)
+            alert.addAction(okBut)
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
     @objc func choosePhoto(){
         let picker = UIImagePickerController()
         picker.delegate = self
@@ -26,17 +49,4 @@ class DetailViewController: UIViewController, UIImagePickerControllerDelegate & 
         self.present(picker, animated: true, completion: nil)
         
     }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        imageV.image = info[.originalImage] as? UIImage
-        self.dismiss(animated: true, completion: nil)
-    }
-    @IBAction func nextBut(_ sender: Any) {
-        let mymodel = MyModel.sharedIns
-        mymodel.placeName = nameTf.text!
-        
-        
-        self.performSegue(withIdentifier: "toMapVc", sender: nil)
-    }
-    
 }
